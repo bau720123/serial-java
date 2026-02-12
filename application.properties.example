@@ -1,0 +1,48 @@
+# ============================================================
+# 序號管理系統 — application.properties 範例
+# Spring Boot 4.0.2 + Java 25 + SQL Server (No Lombok)
+# ============================================================
+# 使用說明：
+# 1. 複製此檔案並重新命名為 application.properties
+# 2. 填入實際的資料庫連線資訊
+# 3. application.properties 已在 .gitignore 中，不會被提交到 Git
+# ============================================================
+
+spring.application.name=serial-management
+server.port=8080
+
+# SQL Server 連線設定（請修改為實際值）
+spring.datasource.url=jdbc:sqlserver://YOUR_DB_HOST:1433;databaseName=YOUR_DB_NAME;encrypt=false;trustServerCertificate=true
+spring.datasource.username=YOUR_USERNAME
+spring.datasource.password=YOUR_PASSWORD
+spring.datasource.driver-class-name=com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+# Connection Pool
+spring.datasource.hikari.maximum-pool-size=20
+spring.datasource.hikari.minimum-idle=5
+
+# JPA / Hibernate (JPA 3.2)
+spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.show-sql=false
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.SQLServerDialect
+spring.jpa.properties.hibernate.format_sql=false
+spring.jpa.properties.hibernate.jdbc.time_zone=Asia/Taipei
+
+# Jackson 3 時間序列化
+spring.jackson.time-zone=Asia/Taipei
+spring.jackson.date-format=yyyy-MM-dd HH:mm:ss
+# 註：WRITE_DATES_AS_TIMESTAMPS 在 Spring Boot 4.0.2 中已移除
+# 改由 JacksonConfig.java 中的 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS) 控制
+
+# Virtual Threads (Java 25 完整支援)
+spring.threads.virtual.enabled=true
+
+# Logging
+logging.level.com.serial=INFO
+logging.level.org.hibernate.SQL=WARN
+
+# Thymeleaf (後台模板引擎)
+spring.thymeleaf.cache=false
+spring.thymeleaf.enabled=true
+spring.thymeleaf.prefix=classpath:/templates/
+spring.thymeleaf.suffix=.html
