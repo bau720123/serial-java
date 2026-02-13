@@ -79,6 +79,14 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Spring Boot DevTools（開發時自動重啟） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+
     </dependencies>
 
     <build>
