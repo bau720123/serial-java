@@ -10,6 +10,7 @@
 | Java | **Java 25** (完整支援) |
 | Web 容器 | Tomcat / Servlet 6.1 (Jakarta EE 11) |
 | ORM | Spring Data JPA + Hibernate (JPA 3.2) |
+| 模板引擎 | Thymeleaf (後台介面) |
 | 驗證 | Bean Validation 3.1 (jakarta.validation) |
 | JSON | Jackson 3 |
 | 資料庫 | SQL Server (mssql-jdbc) |
@@ -19,24 +20,31 @@
 
 ---
 
-## 為何移除 Lombok？
-
-1. **Java 25 相容性**：Lombok 1.18.36 尚未完全支援 Java 25 編譯器 API
-2. **編譯速度**：手動實作 getter/setter 編譯速度更快
-3. **IDE 整合**：完全標準 Java 程式碼，IDE 自動完成更精準
-4. **除錯友善**：Stack trace 完全可讀，無需 delombok
-5. **長期維護**：無需擔心 Lombok 版本更新延遲
-
----
-
-## 快速開始
+## 🚀 快速開始
 
 ### 環境需求
 - Java 25+ ✅
 - Maven 3.9+
 - SQL Server 2019+
 
-### 1. 建立資料庫
+### 1. Clone 專案
+```bash
+git clone <YOUR_REPOSITORY_URL>
+cd serial-java
+```
+
+### 2. 設定資料庫連線
+```bash
+# 複製範例配置檔案
+cp application.properties.example src/main/resources/application.properties
+
+# 編輯 application.properties，填入實際的資料庫資訊
+# - spring.datasource.url
+# - spring.datasource.username
+# - spring.datasource.password
+```
+
+### 3. 建立資料庫
 ```sql
 CREATE DATABASE SerialDB;
 GO
@@ -44,19 +52,20 @@ USE SerialDB;
 -- 執行 src/main/resources/schema.sql
 ```
 
-### 2. 修改連線設定
-```properties
-# src/main/resources/application.properties
-spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=SerialDB;...
-spring.datasource.username=sa
-spring.datasource.password=YourPassword123
-```
-
-### 3. 編譯與啟動
+### 4. 編譯與啟動
 ```powershell
 mvn clean compile
 mvn spring-boot:run
 ```
+
+---
+
+## 📍 訪問網址
+
+| 功能 | URL | 說明 |
+|------|-----|------|
+| 後台管理 | `http://localhost:8080/admin/serials` | 序號列表查詢與匯出 |
+| API 文件 | 見下方 API 端點 | REST API 介面 |
 
 ---
 
@@ -71,7 +80,7 @@ mvn spring-boot:run
 
 ---
 
-## 專案結構
+## 📂 專案結構
 
 ```
 src/main/java/com/serial/
@@ -79,7 +88,9 @@ src/main/java/com/serial/
 ├── config/
 │   └── JacksonConfig.java
 ├── controller/
-│   └── SerialController.java           ← 4 個 REST 端點
+│   ├── SerialController.java           ← 4 個 REST API
+│   └── admin/
+│       └── SerialAdminController.java  ← 後台 Controller
 ├── service/
 │   └── SerialService.java              ← 核心業務邏輯
 ├── entity/
@@ -98,7 +109,33 @@ src/main/java/com/serial/
 │   └── GlobalExceptionHandler.java
 └── middleware/
     └── ApiLoggerFilter.java            ← Laravel api.logger 等價
+
+src/main/resources/
+├── templates/
+│   └── admin/
+│       └── serials/
+│           └── index.html              ← Thymeleaf 模板
+├── application.properties.example      ← 配置範例
+└── schema.sql                          ← DDL
 ```
+
+---
+
+## ⚙️ 重要提醒
+
+### 🔒 安全性
+- **application.properties** 包含資料庫密碼，已加入 `.gitignore`
+- 團隊成員需自行複製 `application.properties.example` 並設定
+- 切勿將 `application.properties` 提交到 Git
+
+### 📦 Maven 建置
+- **target/** 目錄已加入 `.gitignore`（Maven 編譯輸出）
+- 首次 clone 後需執行 `mvn clean install`
+
+### 🎨 IDE 設定
+- IntelliJ IDEA：`.idea/` 已忽略
+- Eclipse：`.project`, `.classpath` 已忽略
+- VS Code：`.vscode/` 已忽略
 
 ---
 
@@ -120,7 +157,23 @@ Optional<SerialDetail> findByContentWithLock(@Param("content") String content);
 
 ---
 
-## 測試
+## 後台功能
+
+### 列表查詢
+- 活動名稱（模糊搜尋）
+- 序號內容（精確搜尋）
+- 狀態篩選（未使用/已使用/已註銷）
+- 建立日期範圍
+- 分頁顯示（預設每頁 10 筆）
+
+### CSV 匯出
+- UTF-8 BOM 編碼（Excel 中文相容）
+- 包含所有搜尋條件的資料
+- 檔名格式：`serials_yyyyMMdd_HHmmss.csv`
+
+---
+
+## 🧪 測試
 
 ```powershell
 mvn test
@@ -128,14 +181,31 @@ mvn test
 
 ---
 
-## 程式碼統計
+## 📝 程式碼統計
 
 | 檔案數 | 行數 (估計) |
 |--------|------------|
 | Entity | 3 個 × 120 行 = 360 行 |
 | DTO | 8 個 × 50 行 = 400 行 |
 | Service | 1 個 × 260 行 = 260 行 |
-| 其他 | ~500 行 |
-| **總計** | **~1,520 行** |
+| Controller | 2 個 × 150 行 = 300 行 |
+| 其他 | ~700 行 |
+| **總計** | **~2,020 行** |
 
 相較 Lombok 版本增加約 30% 程式碼量，但**零外部依賴**。
+
+---
+
+## 🔄 從 Laravel 移植
+
+本專案從 Laravel 10 完整移植而來，功能 100% 對等：
+- ✅ 4 個 REST API（新增、追加、核銷、註銷）
+- ✅ 後台管理介面（列表查詢、CSV 匯出）
+- ✅ API 日誌追蹤（等價於 Laravel api.logger middleware）
+- ✅ 全域錯誤處理（422 驗證錯誤 / 400 業務邏輯錯誤）
+
+---
+
+## 📄 License
+
+MIT

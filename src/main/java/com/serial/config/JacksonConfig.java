@@ -3,7 +3,7 @@ package com.serial.config;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;  // ← 新增這行
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
@@ -15,6 +15,10 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Jackson 3 日期時間序列化配置
+ * 支援 "yyyy-MM-dd HH:mm:ss" 格式
+ */
 @Configuration
 public class JacksonConfig {
 
@@ -26,10 +30,10 @@ public class JacksonConfig {
     public ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();
         
-        // ✅ 修正：先註冊標準的 JavaTimeModule
+        // 先註冊標準的 JavaTimeModule（處理 ISO 格式）
         mapper.registerModule(new JavaTimeModule());
         
-        // ✅ 修正：再用 SimpleModule 覆蓋自訂格式
+        // 再註冊自訂格式（會覆蓋預設行為）
         SimpleModule customModule = new SimpleModule();
         customModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DATETIME_FMT));
         customModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DATETIME_FMT));
