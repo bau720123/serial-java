@@ -70,6 +70,7 @@ public class SerialAdminController {
     /**
      * CSV 匯出功能
      * 對應 Laravel: SerialAdminController@export
+     * 使用分批查詢（chunk）避免記憶體溢位
      */
     @GetMapping("/export")
     public void export(
@@ -80,15 +81,12 @@ public class SerialAdminController {
             @RequestParam(name = "date_end", required = false) String dateEnd,
             HttpServletResponse response) throws IOException {
 
-        // 查詢全部資料（不分頁）
-        List<SerialDetail> list = searchSerialsAll(keyword, content, status, dateStart, dateEnd);
-
         // 設定 CSV 下載 Header
         String filename = "serials_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".csv";
         response.setContentType("text/csv; charset=UTF-8");
         response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
 
-        // 寫入 CSV（使用 UTF-8 BOM，讓 Excel 正確識別中文）
+        // 寫入 CSV（使用 UTF-8 BOM）
         OutputStreamWriter writer = new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8);
         writer.write('\ufeff'); // UTF-8 BOM
 
@@ -97,18 +95,32 @@ public class SerialAdminController {
                 .setQuoteMode(QuoteMode.ALL)
                 .build());
 
-        for (SerialDetail detail : list) {
-            csvPrinter.printRecord(
-                    detail.getSerialActivity().getActivityName(),
-                    detail.getSerialActivity().getActivityUniqueId(),
-                    detail.getContent(),
-                    getStatusText(detail.getStatus()),
-                    detail.getUpdatedAt() != null ? detail.getUpdatedAt().format(DTF) : "--",
-                    detail.getStartDate().format(DTF),
-                    detail.getEndDate().format(DTF),
-                    detail.getNote() != null ? detail.getNote() : "-",
-                    detail.getCreatedAt().format(DTF)
-            );
+        // 使用分批查詢（chunk），每次 1000 筆，對應 Laravel 的 chunk(1000)
+        int chunkSize = 1000;
+        int pageNumber = 0;
+
+        while (true) {
+            Pageable pageable = PageRequest.of(pageNumber, chunkSize);
+            Page<SerialDetail> page = searchSerials(keyword, content, status, dateStart, dateEnd, pageable);
+
+            // 寫入當前批次的資料
+            for (SerialDetail detail : page.getContent()) {
+                csvPrinter.printRecord(
+                        detail.getSerialActivity().getActivityName(),
+                        detail.getSerialActivity().getActivityUniqueId(),
+                        detail.getContent(),
+                        getStatusText(detail.getStatus()),
+                        detail.getUpdatedAt() != null ? detail.getUpdatedAt().format(DTF) : "--",
+                        detail.getStartDate().format(DTF),
+                        detail.getEndDate().format(DTF),
+                        detail.getNote() != null ? detail.getNote() : "-",
+                        detail.getCreatedAt().format(DTF)
+                );
+            }
+
+            // 沒有下一頁就結束
+            if (!page.hasNext()) break;
+            pageNumber++;
         }
 
         csvPrinter.flush();
@@ -143,23 +155,6 @@ public class SerialAdminController {
         Long total = entityManager.createQuery(countQuery).getSingleResult();
 
         return new PageImpl<>(resultList, pageable, total);
-    }
-
-    /**
-     * 查詢全部（不分頁，用於匯出）
-     */
-    private List<SerialDetail> searchSerialsAll(String keyword, String content, Integer status,
-                                                 String dateStart, String dateEnd) {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<SerialDetail> query = cb.createQuery(SerialDetail.class);
-        Root<SerialDetail> root = query.from(SerialDetail.class);
-        root.fetch("serialActivity", JoinType.INNER);
-
-        List<Predicate> predicates = buildPredicates(cb, root, keyword, content, status, dateStart, dateEnd);
-        query.where(predicates.toArray(new Predicate[0]));
-        query.orderBy(cb.desc(root.get("id")));
-
-        return entityManager.createQuery(query).getResultList();
     }
 
     /**

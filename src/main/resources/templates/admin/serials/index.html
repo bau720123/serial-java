@@ -243,8 +243,7 @@ $(document).ready(function() {
         // before：export?keyword=&content=C1689170&status=&date_start=&date_end=
         // after：export?content=C1689170
 
-        // window.location.href = baseUrl + "/export?" + queryString;
-        window.location.href = baseUrl + "/export" + (queryString ? "?" + queryString : "");
+        window.location.href = baseUrl + "/export?" + queryString;
     });
 });
 </script>
