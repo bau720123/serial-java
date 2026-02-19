@@ -15,11 +15,26 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * 序號管理核心業務邏輯服務
+ * 
+ * 這個類別是整個系統的核心，負責：
+ * 1. 批次新增序號（insertSerials）
+ * 2. 批次追加序號（additionalInsertSerials）
+ * 3. 核銷序號（redeemSerial）
+ * 4. 批次註銷序號（cancelSerials）
+ * 
+ * @Service 註解：告訴 Spring 這是一個業務邏輯層元件
+ * Spring 會自動建立這個類別的實例（Bean），並注入到需要它的地方
+ */
 @Service
 public class SerialService {
 
-    private final SerialActivityRepository activityRepo;
-    private final SerialDetailRepository detailRepo;
+    // 依賴注入：Spring 自動注入這兩個 Repository
+    private final SerialActivityRepository activityRepo;  // 活動資料存取
+    private final SerialDetailRepository detailRepo;      // 序號資料存取
+    
+    // 日期時間格式化工具：統一格式為 "yyyy-MM-dd HH:mm:ss"
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public SerialService(SerialActivityRepository activityRepo, SerialDetailRepository detailRepo) {
