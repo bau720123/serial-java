@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 後台管理 Controller
@@ -71,6 +72,7 @@ public class SerialAdminController {
      * CSV 匯出功能
      * 對應 Laravel: SerialAdminController@export
      * 使用分批查詢（chunk）避免記憶體溢位
+     * 使用 AJAX 方式匯出，支援 Loading 效果
      */
     @GetMapping("/export")
     public void export(
@@ -81,10 +83,19 @@ public class SerialAdminController {
             @RequestParam(name = "date_end", required = false) String dateEnd,
             HttpServletResponse response) throws IOException {
 
-        // 設定 CSV 下載 Header
-        String filename = "serials_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".csv";
+        // 模擬耗時的匯出過程（測試 Loading 動畫）
+        // try {
+        //     TimeUnit.SECONDS.sleep(5);  // ← 延遲 5 秒
+        // } catch (InterruptedException e) {
+        //     Thread.currentThread().interrupt();
+        // }
+
+        // 設定檔名
+        String filename = "serial_export_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".csv";
+        
+        // 設定 HTTP Header
         response.setContentType("text/csv; charset=UTF-8");
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+        response.setHeader("X-Suggested-Filename", filename);  // 自訂 Header 給前端抓
 
         // 寫入 CSV（使用 UTF-8 BOM）
         OutputStreamWriter writer = new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8);
