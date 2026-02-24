@@ -100,8 +100,8 @@ src/main/java/com/serial/
 │   ├── SerialDetailRepository.java
 │   └── SerialLogRepository.java
 ├── dto/
-│   ├── request/  (4 個 Request DTO，手動實作)
-│   └── response/ (4 個 Response DTO，手動實作)
+│   ├── request/  （4 個 Request DTO，手動實作）
+│   └── response/ （4 個 Response DTO，手動實作）
 ├── exception/
 │   ├── BusinessException.java
 │   └── GlobalExceptionHandler.java
@@ -168,29 +168,6 @@ Optional<SerialDetail> findByContentWithLock(@Param("content") String content);
 - UTF-8 BOM 編碼（Excel 中文相容）
 - 包含所有搜尋條件的資料
 - 檔名格式：`serials_yyyyMMdd_HHmmss.csv`
-
----
-
-## 🧪 測試
-
-```powershell
-mvn test
-```
-
----
-
-## 📝 程式碼統計
-
-| 檔案數 | 行數 (估計) |
-|--------|------------|
-| Entity | 3 個 × 120 行 = 360 行 |
-| DTO | 8 個 × 50 行 = 400 行 |
-| Service | 1 個 × 260 行 = 260 行 |
-| Controller | 2 個 × 150 行 = 300 行 |
-| 其他 | ~700 行 |
-| **總計** | **~2,020 行** |
-
-相較 Lombok 版本增加約 30% 程式碼量，但**零外部依賴**。
 
 ---
 
