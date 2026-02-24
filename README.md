@@ -1,22 +1,21 @@
-# 序號管理系統 — Spring Boot 4.0.2 (No Lombok)
+# 序號管理系統 — Spring Boot 4.0.2
 
-完整 Java 25 相容版本，**不使用 Lombok**，所有程式碼手動實作。
+完整 Java 25 相容版本
 
 ## 技術棧
 
 | 項目 | 版本 / 技術 |
 |------|------------|
 | 框架 | **Spring Boot 4.0.2** |
-| Java | **Java 25** (完整支援) |
-| Web 容器 | Tomcat / Servlet 6.1 (Jakarta EE 11) |
-| ORM | Spring Data JPA + Hibernate (JPA 3.2) |
-| 模板引擎 | Thymeleaf (後台介面) |
-| 驗證 | Bean Validation 3.1 (jakarta.validation) |
+| Java | **Java 25**（完整支援）|
+| Web 容器 | Tomcat / Servlet 6.1（Jakarta EE 11）|
+| ORM | Spring Data JPA + Hibernate（JPA 3.2）|
+| 模板引擎 | Thymeleaf（後台介面）|
+| 驗證 | Bean Validation 3.1（jakarta.validation）|
 | JSON | Jackson 3 |
-| 資料庫 | SQL Server (mssql-jdbc) |
-| 測試 | JUnit Jupiter 6 |
-| 並發 | Virtual Threads (Java 25 原生支援) |
-| **依賴管理** | **無 Lombok** ✅ |
+| 資料庫 | SQL Server（mssql-jdbc）|
+| 測試 | JUnit Jupiter 6（暫時沒用到） |
+| 並發 | Virtual Threads（Java 25 原生支援）|
 
 ---
 
@@ -54,8 +53,7 @@ USE SerialDB;
 
 ### 4. 編譯與啟動
 ```powershell
-mvn clean compile
-mvn spring-boot:run
+mvn clean spring-boot:run
 ```
 
 ---
@@ -84,7 +82,7 @@ mvn spring-boot:run
 
 ```
 src/main/java/com/serial/
-├── SerialManagementApplication.java
+├── SerialManagementApplication.java    ← 跟目錄檔案，類似Laravel的index.php
 ├── config/
 │   └── JacksonConfig.java
 ├── controller/
