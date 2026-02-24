@@ -1,22 +1,21 @@
-# 序號管理系統 — Spring Boot 4.0.2 (No Lombok)
+# 序號管理系統 — Spring Boot 4.0.2
 
-完整 Java 25 相容版本，**不使用 Lombok**，所有程式碼手動實作。
+完整 Java 25 相容版本
 
 ## 技術棧
 
 | 項目 | 版本 / 技術 |
 |------|------------|
 | 框架 | **Spring Boot 4.0.2** |
-| Java | **Java 25** (完整支援) |
-| Web 容器 | Tomcat / Servlet 6.1 (Jakarta EE 11) |
-| ORM | Spring Data JPA + Hibernate (JPA 3.2) |
-| 模板引擎 | Thymeleaf (後台介面) |
-| 驗證 | Bean Validation 3.1 (jakarta.validation) |
+| Java | **Java 25**（完整支援）|
+| Web 容器 | Tomcat / Servlet 6.1（Jakarta EE 11）|
+| ORM | Spring Data JPA + Hibernate（JPA 3.2）|
+| 模板引擎 | Thymeleaf（後台介面）|
+| 驗證 | Bean Validation 3.1（jakarta.validation）|
 | JSON | Jackson 3 |
-| 資料庫 | SQL Server (mssql-jdbc) |
-| 測試 | JUnit Jupiter 6 |
-| 並發 | Virtual Threads (Java 25 原生支援) |
-| **依賴管理** | **無 Lombok** ✅ |
+| 資料庫 | SQL Server（mssql-jdbc）|
+| 測試 | JUnit Jupiter 6（暫時沒用到） |
+| 並發 | Virtual Threads（Java 25 原生支援）|
 
 ---
 
@@ -54,8 +53,7 @@ USE SerialDB;
 
 ### 4. 編譯與啟動
 ```powershell
-mvn clean compile
-mvn spring-boot:run
+mvn clean spring-boot:run
 ```
 
 ---
@@ -84,7 +82,7 @@ mvn spring-boot:run
 
 ```
 src/main/java/com/serial/
-├── SerialManagementApplication.java
+├── SerialManagementApplication.java    ← 跟目錄檔案，類似Laravel的index.php
 ├── config/
 │   └── JacksonConfig.java
 ├── controller/
@@ -102,8 +100,8 @@ src/main/java/com/serial/
 │   ├── SerialDetailRepository.java
 │   └── SerialLogRepository.java
 ├── dto/
-│   ├── request/  (4 個 Request DTO，手動實作)
-│   └── response/ (4 個 Response DTO，手動實作)
+│   ├── request/  （4 個 Request DTO，手動實作）
+│   └── response/ （4 個 Response DTO，手動實作）
 ├── exception/
 │   ├── BusinessException.java
 │   └── GlobalExceptionHandler.java
@@ -170,29 +168,6 @@ Optional<SerialDetail> findByContentWithLock(@Param("content") String content);
 - UTF-8 BOM 編碼（Excel 中文相容）
 - 包含所有搜尋條件的資料
 - 檔名格式：`serials_yyyyMMdd_HHmmss.csv`
-
----
-
-## 🧪 測試
-
-```powershell
-mvn test
-```
-
----
-
-## 📝 程式碼統計
-
-| 檔案數 | 行數 (估計) |
-|--------|------------|
-| Entity | 3 個 × 120 行 = 360 行 |
-| DTO | 8 個 × 50 行 = 400 行 |
-| Service | 1 個 × 260 行 = 260 行 |
-| Controller | 2 個 × 150 行 = 300 行 |
-| 其他 | ~700 行 |
-| **總計** | **~2,020 行** |
-
-相較 Lombok 版本增加約 30% 程式碼量，但**零外部依賴**。
 
 ---
 
