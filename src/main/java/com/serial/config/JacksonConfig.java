@@ -78,6 +78,7 @@ public class JacksonConfig {
      */
     @Bean
     @Primary
+    @SuppressWarnings("removal")
     public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         converter.setObjectMapper(objectMapper());
